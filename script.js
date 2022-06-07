@@ -9,13 +9,14 @@ Each function is annotated with a comment explaining what it should do.
 By the end of the lab, all tests in the report should be passing.
 */
 
+
 const studentInformation = {
-  name: "FILL_IN_YOUR_NAME_HERE",
-  grade: "FILL_IN_YOUR_GRADE_HERE",
-  advisor: "FILL_IN_YOUR_ADVISOR_HERE",
-  major: "FILL_IN_YOUR_MAJOR_HERE",
-  graduationYear: "FILL_IN_YOUR_GRADUATION_YEAR_HERE",
-  imageUrl: "ADD_A_URL_TO_ANY_IMAGE_HERE",
+  name: "Johnny Depp",
+  grade: "14",
+  advisor: "Jack Sparrow",
+  major: "Theatre",
+  graduationYear: "2024",
+  imageUrl: "https://image.gala.de/22859084/t/6i/v5/w1440/r1.5/-/johnny-depp-camille-vasquez.jpg",
 }
 
 let semester = "Spring Semester"
@@ -60,6 +61,21 @@ const gpaPointsLookup = {
  */
 const dropdownEl = document.querySelector(".dropdown")
 // ADD more query selectors here
+const studentName = document.querySelector("#student-name")
+const studentAdvisor = document.querySelector("#student-advisor")
+const studentMajor = document.querySelector("#student-major")
+const studentGrade = document.querySelector("#student-grade-level")
+const studentGraduationYear = document.querySelector("#student-graduation-year")
+const studentImage = document.querySelector("#student-image")
+const semesterDropdown = document.querySelector(".semester-dropdown")
+const semesterDropdownButton = document.querySelector(".dropdown-button")
+const semesterDropdownLabel = document.querySelector(".dropdown-label")
+const fallSemesterSpan = document.querySelector("#fall-semester")
+const springSemesterSpan = document.querySelector("#spring-semester")
+const winterTermSpan = document.querySelector("#winter-term")
+const reportCardTable = document.querySelector("#report-card-table")
+const actionsDiv = document.querySelector(".actions")
+const filterBtn = actionsDiv.querySelector(".btn")
 
 /**
  * SOLUTIONS FOR STUDENT INFO DOM UPDATES
@@ -70,8 +86,8 @@ const dropdownEl = document.querySelector(".dropdown")
  *
  * @param {String} studentName - the name of the student
  */
-function updateStudentName(studentName) {
-  // code goes here
+function updateStudentName(studentNameInput) {
+  studentName.innerHTML = studentNameInput
 }
 
 /**
@@ -79,8 +95,8 @@ function updateStudentName(studentName) {
  *
  * @param {String|Number} studentGradeLevel - the grade level of the student
  */
-function updateStudentGradeLevel(studentGradeLevel) {
-  // code goes here
+function updateStudentGradeLevel(studentGradeLevelInput) {
+  studentGrade.innerHTML = studentGradeLevelInput
 }
 
 /**
@@ -88,8 +104,8 @@ function updateStudentGradeLevel(studentGradeLevel) {
  *
  * @param {String} studentAdvisor - the advisor of the student
  */
-function updateStudentAdvisor(studentAdvisor) {
-  // code goes here
+function updateStudentAdvisor(studentAdvisorInput) {
+  studentAdvisor.innerHTML = studentAdvisorInput
 }
 
 /**
@@ -97,8 +113,8 @@ function updateStudentAdvisor(studentAdvisor) {
  *
  * @param {String} studentMajor - the major of the student
  */
-function updateMajor(studentMajor) {
-  // code goes here
+function updateMajor(studentMajorInput) {
+  studentMajor.innerHTML = studentMajorInput
 }
 
 /**
@@ -106,8 +122,8 @@ function updateMajor(studentMajor) {
  *
  * @param {Number} graduationyear - the year the student graduates
  */
-function updateStudentGraduationYear(graduationYear) {
-  // code goes here
+function updateStudentGraduationYear(graduationYearInput) {
+  studentGraduationYear.innerHTML = graduationYearInput
 }
 
 /**
@@ -116,8 +132,9 @@ function updateStudentGraduationYear(graduationYear) {
  *
  * @param {String} url - a link to an image
  */
-function updateStudentImage(imageUrl) {
-  // code goes here
+function updateStudentImage(imageUrlInput) {
+  studentImage.src = imageUrlInput
+  // studentImage.setAttribute("src", imageUrlInput)
 }
 
 /**
@@ -141,7 +158,19 @@ function populateStudentInfo(studentInformationObject) {
  */
 function addReportCardHeaders(reportCardTableElement) {
   // update the code here
-  reportCardTableElement.innerHTML += ``
+  // A new div section with a class name table-header.
+  // Inside the new div section, add Level 4 header containing the report card header titles.
+  // TODO: figure out why += doesn't work here. Only = works. Does html injection use = or +=?
+  reportCardTableElement.innerHTML = `
+  <div class="table-row table-header">
+    <h4 class="code-col">Code</h4>
+    <h4 class="name-col">Name</h4>
+    <h4 class="sem-col">Semester</h4>
+    <h4 class="cred-col">Credits</h4>
+    <h4 class="lett-col">Letter</h4>
+    <h4 class="pts-col">Points</h4>
+  </div>
+  `
 }
 
 /**
@@ -155,7 +184,12 @@ function addCourseRowToReportCard(reportCardTableElement, course, rowNum) {
   // update the code here with information about the course passed to this function
   reportCardTableElement.innerHTML += `
   <div class="table-row course-row row-${rowNum + 1} ${rowNum % 2 === 1 ? "odd" : "even"}">
-
+    <h4 class="code-col">${course.code}</h4>
+    <h4 class="name-col">${course.name}</h4>
+    <h4 class="sem-col">${course.semester}</h4>
+    <h4 class="cred-col"><span class="credit">${course.credits}</span> credits</h4>
+    <h4 class="lett-col gpa">${course.grade}</h4>
+    <h4 id="gpa-${rowNum + 1}" class="pts-col">?</h4>
   </div>
   `
 }
@@ -185,8 +219,11 @@ function updateReportCard(reportCardTableElement, currentSemester) {
   updateDropdownLabel()
   // reset the report card table's inner html to an empty string
   if (reportCardTableElement) reportCardTableElement.innerHTML = ``
-
-  // add your code here
+  addReportCardHeaders(reportCardTable)
+  // loop through student data
+  studentData[currentSemester].forEach((course, i) => { // can add multiple variables
+    addCourseRowToReportCard(reportCardTable, course, i) 
+  })
 }
 
 /**
@@ -213,7 +250,7 @@ function openDropdown(dropdownElement) {
  *
  */
 function updateDropdownLabel() {
-  // code goes here
+  semesterDropdownLabel.innerHTML = semester
 }
 
 /**
@@ -271,4 +308,6 @@ function calculateSemesterGpa(reportCardTableElement) {
 
 window.onload = function () {
   // execute your functions here to make sure they run as soon as the page loads
+  populateStudentInfo(studentInformation)
+  updateReportCard(reportCardTable, semester)
 }
