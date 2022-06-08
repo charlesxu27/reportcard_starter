@@ -67,7 +67,6 @@ const studentMajor = document.querySelector("#student-major")
 const studentGrade = document.querySelector("#student-grade-level")
 const studentGraduationYear = document.querySelector("#student-graduation-year")
 const studentImage = document.querySelector("#student-image")
-const semesterDropdown = document.querySelector(".semester-dropdown")
 const semesterDropdownButton = document.querySelector(".dropdown-button")
 const semesterDropdownLabel = document.querySelector(".dropdown-label")
 const fallSemesterSpan = document.querySelector("#fall-semester")
@@ -236,7 +235,7 @@ function updateReportCard(reportCardTableElement, currentSemester) {
   // update the dropdown label
   updateDropdownLabel()
   // reset the report card table's inner html to an empty string
-  if (reportCardTableElement) reportCardTableElement.innerHTML = ``
+  reportCardTableElement.innerHTML = ``
   addReportCardHeaders(reportCardTable)
   // loop through student data
   studentData[currentSemester].forEach((course, i) => { // can add multiple variables
@@ -287,27 +286,29 @@ function addEventListeners(
   winterTermElement
 ) {
   // Add an event listener for the dropdown button that calls the openDropdown function with the correct DOM element
-  dropdownButtonElement.addEventListeners("click", () => {
+    console.log(dropdownElement.classList.contains("closed"))
+
+  dropdownButtonElement.addEventListener("click", () => {
     openDropdown(dropdownElement)
   })
   // Add 3 event listeners - one for the fall semester option, the spring semester option, and the winter term option
-  fallSemesterElement.addEventListeners("click", () => {
+  // Each callback function one should update the `semester` variable,
+  // call the `updateReportCard` function, and close the dropdown
+  fallSemesterElement.addEventListener("click", () => {
     semester = "Fall Semester"
     updateReportCard(reportCardTableElement, semester)
     closeDropdown(dropdownButtonElement)
   })
-  springSemesterElement.addEventListeners("click", () => {
+  springSemesterElement.addEventListener("click", () => {
     semester = "Spring Semester"
     updateReportCard(reportCardTableElement, semester)
     closeDropdown(dropdownButtonElement)
   })
-  winterTermElement.addEventListeners("click", () => {
+  winterTermElement.addEventListener("click", () => {
     semester = "Winter Term"
     updateReportCard(reportCardTableElement, semester)
     closeDropdown(dropdownButtonElement)
   })
-  // Each callback function one should update the `semester` variable,
-  // call the `updateReportCard` function, and close the dropdown
 }
 
 /***************
@@ -347,7 +348,7 @@ function calculateSemesterGpa(reportCardTableElement) {
 window.onload = function () {
   // execute your functions here to make sure they run as soon as the page loads
 
-  populateStudentInfo(studentInformation)
   addEventListeners(dropdownEl, semesterDropdownButton, reportCardTable, fallSemesterSpan, springSemesterSpan, winterTermSpan)
+  populateStudentInfo(studentInformation)
   updateReportCard(reportCardTable, semester)
 }
